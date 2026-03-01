@@ -1,0 +1,164 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #faf8f5;
+  --foreground: #1a1a1a;
+  --card: rgba(255, 255, 255, 0.72);
+  --card-foreground: #1a1a1a;
+  --popover: rgba(255, 255, 255, 0.85);
+  --popover-foreground: #1a1a1a;
+  --primary: #1a1a1a;
+  --primary-foreground: #faf8f5;
+  --secondary: #f0ece6;
+  --secondary-foreground: #1a1a1a;
+  --muted: #f0ece6;
+  --muted-foreground: #6b6560;
+  --accent: #c44b3f;
+  --accent-foreground: #ffffff;
+  --destructive: #c44b3f;
+  --destructive-foreground: #ffffff;
+  --border: rgba(26, 26, 26, 0.08);
+  --input: rgba(26, 26, 26, 0.08);
+  --ring: rgba(26, 26, 26, 0.15);
+  --chart-1: #c44b3f;
+  --chart-2: #d4a574;
+  --chart-3: #8b7355;
+  --chart-4: #b8a088;
+  --chart-5: #e8d5c0;
+  --radius: 0.75rem;
+  --receipt: #fffef9;
+  --receipt-foreground: #2a2a2a;
+  --glass: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.3);
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), 'Geist', sans-serif;
+  --font-mono: var(--font-courier), 'Courier New', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-receipt: var(--receipt);
+  --color-receipt-foreground: var(--receipt-foreground);
+  --color-glass: var(--glass);
+  --color-glass-border: var(--glass-border);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Mesh gradient background */
+.mesh-gradient {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(232, 213, 192, 0.5) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(196, 75, 63, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(212, 165, 116, 0.3) 0%, transparent 50%),
+    var(--background);
+}
+
+/* Zigzag edge for receipt */
+.zigzag-bottom {
+  position: relative;
+}
+.zigzag-bottom::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background:
+    linear-gradient(135deg, var(--receipt) 33.33%, transparent 33.33%) 0 0,
+    linear-gradient(225deg, var(--receipt) 33.33%, transparent 33.33%) 0 0;
+  background-size: 12px 10px;
+  background-repeat: repeat-x;
+}
+
+.zigzag-top {
+  position: relative;
+}
+.zigzag-top::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background:
+    linear-gradient(315deg, var(--receipt) 33.33%, transparent 33.33%) 0 0,
+    linear-gradient(45deg, var(--receipt) 33.33%, transparent 33.33%) 0 0;
+  background-size: 12px 10px;
+  background-repeat: repeat-x;
+}
+
+/* Glassmorphism utility */
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+}
+
+/* Receipt thermal print effect */
+.receipt-shadow {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 12px 32px rgba(0, 0, 0, 0.04);
+}
+
+/* Barcode stripes */
+@keyframes barcode-scan {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Smooth page transitions */
+.page-transition {
+  animation: fadeUp 0.5s ease-out;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
