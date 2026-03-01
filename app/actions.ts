@@ -2,8 +2,14 @@
 
 import OpenAI from "openai"
 
+// 检查环境变量
+const apiKey = process.env.DASHSCOPE_API_KEY
+if (!apiKey) {
+  console.error("❌ DASHSCOPE_API_KEY 未配置！请在 Vercel 或 .env.local 中设置")
+}
+
 const openai = new OpenAI({
-  apiKey: apiKey: process.env.DASHSCOPE_API_KEY || process.env.OPENAI_API_KEY || "",
+  apiKey: apiKey || "dummy-key",
   baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
 })
 
@@ -25,10 +31,28 @@ export async function analyzeFoodWithAI(
 ): Promise<AIFoodResult> {
   const normalizedName = foodName.toLowerCase().trim()
 
+  // 检查 API Key
+  if (!apiKey) {
+    console.error("❌ API Key 未配置")
+    return {
+      emoji: "⚠️",
+      summary: "环境变量未配置。请在 Vercel 设置中添加 DASHSCOPE_API_KEY，或在本地创建 .env.local 文件。",
+      risks: [
+        { label: "环境变量缺失", severity: "high" },
+        { label: "请配置 DASHSCOPE_API_KEY", severity: "high" },
+        { label: "参考 VERCEL_DEPLOY.md", severity: "medium" },
+      ],
+      slogan: "配置缺失",
+    }
+  }
+
   // 检查缓存
   if (cache.has(normalizedName)) {
+    console.log("✅ 使用缓存:", normalizedName)
     return cache.get(normalizedName)!
   }
+
+  console.log("🔍 调用 AI API:", normalizedName)
 
   try {
     const completion = await openai.chat.completions.create({
@@ -71,19 +95,24 @@ export async function analyzeFoodWithAI(
 
     // 存入缓存
     cache.set(normalizedName, result)
+    console.log("✅ AI 返回成功")
 
     return result
   } catch (error) {
-    console.error("OpenAI API Error:", error)
+    console.error("❌ API 调用失败:", error)
+    
+    // 详细错误信息
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error("错误详情:", errorMessage)
 
     // 返回默认错误响应
     return {
       emoji: "🖨️",
-      summary: "打印机卡纸了，请稍后再试。可能是 API 配额用完或网络问题。",
+      summary: `API 调用失败：${errorMessage.slice(0, 50)}。请检查 API Key 是否正确，或阿里云账户是否有余额。`,
       risks: [
         { label: "API 调用失败", severity: "high" },
-        { label: "请检查 API Key", severity: "medium" },
-        { label: "或稍后重试", severity: "low" },
+        { label: "请检查 Vercel 环境变量", severity: "high" },
+        { label: "或检查 API Key 余额", severity: "medium" },
       ],
       slogan: "技术故障中...",
     }
